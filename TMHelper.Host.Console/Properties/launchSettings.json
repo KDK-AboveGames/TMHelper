@@ -1,0 +1,16 @@
+{
+    "profiles": {
+        "OpenCV Battle": {
+            "commandName": "Project",
+            "commandLineArgs": "--board Battle --opencv --opencv-savetest --opencv-debug --opencv-boardstyle Autumn --opencv-startx 424 --opencv-starty 171 --opencv-endx 854 --opencv-endy 599"
+        },
+        "OpenCV BoxOfSages": {
+            "commandName": "Project",
+            "commandLineArgs": "--board BoxOfSages --opencv --opencv-savetest --opencv-debug --opencv-boardstyle Autumn --opencv-startx 283 --opencv-starty 50 --opencv-endx 1002 --opencv-endy 769"
+        },
+        "Help Screen": {
+            "commandName": "Project",
+            "commandLineArgs": "--help"
+        }
+    }
+}

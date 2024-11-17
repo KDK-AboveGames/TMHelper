@@ -6,15 +6,15 @@
 	/// Координата левого верхнего угла доски равна 1:1.
 	/// Координаты только увеличиваются.
 	/// </summary>
-	public class BattleBoardState : BoardState, ICloneable
+	public class BattleBoardState : BoardState
 	{
 		public BattleBoardState()
 			: base(6, 6)
 		{ }
 
-		public object Clone()
+		public override object Clone()
 		{
-			BattleBoardState clone = new BattleBoardState();
+			BattleBoardState clone = new();
 
 			Array.Copy(Gems, clone.Gems, Gems.Length);
 

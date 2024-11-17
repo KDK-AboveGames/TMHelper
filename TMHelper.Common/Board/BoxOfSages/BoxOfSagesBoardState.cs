@@ -1,20 +1,20 @@
 ﻿namespace TMHelper.Common.Board.BoxOfSages
 {
 	/// <summary>
-	/// Модель для хранения состояния доски match-3 шкатулки мудрецов.
+	/// Модель для хранения состояния доски match-3 Шкатулки Мудрецов.
 	/// Начало координат находится в левом верхнем углу доски.
 	/// Координата левого верхнего угла доски равна 1:1.
 	/// Координаты только увеличиваются.
 	/// </summary>
-	public class BoxOfSagesBoardState : BoardState, ICloneable
+	public class BoxOfSagesBoardState : BoardState
 	{
 		public BoxOfSagesBoardState()
-			: base(8, 8)
+			: base(10, 10)
 		{ }
 
-		public object Clone()
+		public override object Clone()
 		{
-			BoxOfSagesBoardState clone = new BoxOfSagesBoardState();
+			BoxOfSagesBoardState clone = new();
 
 			Array.Copy(Gems, clone.Gems, Gems.Length);
 

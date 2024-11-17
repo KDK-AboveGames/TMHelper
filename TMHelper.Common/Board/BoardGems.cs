@@ -26,6 +26,7 @@ namespace TMHelper.Common.Board
 		[BoardGemInfo(R, 3)] R3,
 		[BoardGemInfo(R, 4)] R4,
 		[BoardGemInfo(R, 5)] R5,
+		[BoardGemInfo(R, 6)] R6,
 
 		/// <summary>
 		/// Зеленый (green) камень уровня 1.
@@ -37,6 +38,7 @@ namespace TMHelper.Common.Board
 		[BoardGemInfo(G, 3)] G3,
 		[BoardGemInfo(G, 4)] G4,
 		[BoardGemInfo(G, 5)] G5,
+		[BoardGemInfo(G, 6)] G6,
 
 		/// <summary>
 		/// Синий камень (blue) уровня 1.
@@ -48,6 +50,7 @@ namespace TMHelper.Common.Board
 		[BoardGemInfo(B, 3)] B3,
 		[BoardGemInfo(B, 4)] B4,
 		[BoardGemInfo(B, 5)] B5,
+		[BoardGemInfo(B, 6)] B6,
 
 		/// <summary>
 		/// Череп (skull) уровня 1.
@@ -59,6 +62,7 @@ namespace TMHelper.Common.Board
 		[BoardGemInfo(S, 3)] S3,
 		[BoardGemInfo(S, 4)] S4,
 		[BoardGemInfo(S, 5)] S5,
+		[BoardGemInfo(S, 6)] S6,
 
 		/// <summary>
 		/// Желтый (yellow) камень уровня 1.
@@ -70,6 +74,7 @@ namespace TMHelper.Common.Board
 		[BoardGemInfo(Y, 3)] Y3,
 		[BoardGemInfo(Y, 4)] Y4,
 		[BoardGemInfo(Y, 5)] Y5,
+		[BoardGemInfo(Y, 6)] Y6,
 
 		/// <summary>
 		/// Бардовый (maroon) камень уровня 1.
@@ -81,6 +86,7 @@ namespace TMHelper.Common.Board
 		[BoardGemInfo(M, 3)] M3,
 		[BoardGemInfo(M, 4)] M4,
 		[BoardGemInfo(M, 5)] M5,
+		[BoardGemInfo(M, 6)] M6,
 
 		/// <summary>
 		/// Фиолетовый (purple) камень уровня 1.
@@ -92,6 +98,7 @@ namespace TMHelper.Common.Board
 		[BoardGemInfo(P, 3)] P3,
 		[BoardGemInfo(P, 4)] P4,
 		[BoardGemInfo(P, 5)] P5,
+		[BoardGemInfo(P, 6)] P6,
 	}
 
 	/// <summary>
@@ -116,11 +123,15 @@ namespace TMHelper.Common.Board
 	{
 		private static readonly Dictionary<BoardGems, BoardGems> GemsBaseTypes;
 		private static readonly Dictionary<BoardGems, int> GemsValues;
+		private static readonly Dictionary<BoardGems, Dictionary<int, BoardGems>> GemsWithValuesByTypeAndValue;
+		private static readonly Dictionary<BoardGems, string> GemsFriendlyStrings;
 
 		static BoardGemsExtensions()
 		{
 			GemsBaseTypes = new Dictionary<BoardGems, BoardGems>();
 			GemsValues = new Dictionary<BoardGems, int>();
+			GemsWithValuesByTypeAndValue = new Dictionary<BoardGems, Dictionary<int, BoardGems>>();
+			GemsFriendlyStrings = new Dictionary<BoardGems, string>();
 
 			Type gemInfoAttributeType = typeof(BoardGemInfoAttribute);
 			Type gemsEnumType = typeof(BoardGems);
@@ -146,6 +157,20 @@ namespace TMHelper.Common.Board
 
 				GemsBaseTypes.Add(gemsEnumValue, infoAttribute.GemBase);
 				GemsValues.Add(gemsEnumValue, infoAttribute.Value);
+
+				if (!GemsWithValuesByTypeAndValue.TryGetValue(infoAttribute.GemBase, out Dictionary<int, BoardGems>? gemsByValue))
+				{
+					gemsByValue = new Dictionary<int, BoardGems>();
+					GemsWithValuesByTypeAndValue.Add(infoAttribute.GemBase, gemsByValue);
+				}
+
+				gemsByValue.Add(infoAttribute.Value, gemsEnumValue);
+
+				GemsFriendlyStrings.Add(
+					gemsEnumValue,
+					gemsEnumValue.IsSameTypeAs(BoardGems.Empty)
+						? nameof(BoardGems.__)
+						: (gemsEnumValue.ToString().Substring(0, 1) + infoAttribute.Value));
 			}
 		}
 
@@ -153,9 +178,25 @@ namespace TMHelper.Common.Board
 		/// Получает тип камня по значению перечисления.
 		/// Например, у камня с обозначем R3 тип R.
 		/// </summary>
-		public static bool SameTypeAs(this BoardGems gem, BoardGems other)
+		public static bool IsSameTypeAs(this BoardGems gem, BoardGems other)
 		{
 			return GemsBaseTypes[gem] == GemsBaseTypes[other];
+		}
+
+		/// <summary>
+		/// Получает значению базовый тип камня.
+		/// </summary>
+		public static BoardGems GetBaseType(this BoardGems gem)
+		{
+			return GemsBaseTypes[gem];
+		}
+
+		/// <summary>
+		/// Получает значению, показывающее, является ли камень базовым (1-ый уровень, кол-во внутри = 1).
+		/// </summary>
+		public static bool IsBaseType(this BoardGems gem)
+		{
+			return gem == GemsBaseTypes[gem];
 		}
 
 		/// <summary>
@@ -165,6 +206,22 @@ namespace TMHelper.Common.Board
 		public static int GetCountValue(this BoardGems gem)
 		{
 			return GemsValues[gem];
+		}
+
+		/// <summary>
+		/// Получает вариант камня, в котором хранится информация о кол-ве камней внутри.
+		/// </summary>
+		public static BoardGems GetGemWithCountValue(this BoardGems gemType, int countValue)
+		{
+			return GemsWithValuesByTypeAndValue.TryGetValue(GemsBaseTypes[gemType], out Dictionary<int, BoardGems>? gemsByValue)
+				&& gemsByValue.TryGetValue(countValue, out BoardGems gem)
+				? gem
+				: throw new ArgumentOutOfRangeException(nameof(countValue), $"{gemType},{countValue}");
+		}
+
+		public static string ToStringFriendly(this BoardGems gem)
+		{
+			return GemsFriendlyStrings[gem];
 		}
 	}
 }

@@ -17,9 +17,9 @@ namespace TMHelper.Tests.Board.Battle
 				_, _, _, R, R, G,
 				_, _, _, G, G, R);
 
-			BattleBoardActionResult result = BoardSolver.ApplyActionAndSolve(
+			BoardActionResult<BattleBoardState> result = DoSwapAction(
 				initialState,
-				CreateSwap(6, 6, Up));
+				new BoardGemSwap(6, 6, Up));
 
 			Assert.Multiple(() =>
 			{
@@ -36,7 +36,7 @@ namespace TMHelper.Tests.Board.Battle
 				Is.TypeOf<ArgumentOutOfRangeException>(),
 				() =>
 				{
-					BattleBoardActionResult result = BoardSolver.ApplyActionAndSolve(
+					BoardActionResult<BattleBoardState> result = DoSwapAction(
 						CreateBoardState(
 							_, _, _, _, _, _,
 							_, _, _, _, _, _,
@@ -44,7 +44,7 @@ namespace TMHelper.Tests.Board.Battle
 							_, _, _, _, _, _,
 							_, _, _, R, R, G,
 							_, _, _, G, G, R),
-						CreateSwap(7, 6, Up));
+						new BoardGemSwap(7, 6, Up));
 				});
 		}
 	}

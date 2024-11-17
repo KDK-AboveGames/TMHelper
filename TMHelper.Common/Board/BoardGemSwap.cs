@@ -1,60 +1,53 @@
-﻿namespace TMHelper.Common.Board.Actions
+﻿namespace TMHelper.Common.Board
 {
 	/// <summary>
-	/// Действие, в котором игрок совершил сдвиг камней на доске.
+	/// Информация о смещении камней на доске.
 	/// </summary>
-	public class BoardGemSwapAction : BoardAction, IEquatable<BoardGemSwapAction>
+	public readonly struct BoardGemSwap : IEquatable<BoardGemSwap>
 	{
 		public readonly BoardCoords From;
 		public readonly BoardGemSwapDirections SwapDirection;
 		public readonly BoardCoords To;
 
-		public BoardGemSwapAction(BoardCoords coords, BoardGemSwapDirections swapDirection)
+		public BoardGemSwap(int row, int column, BoardGemSwapDirections swapDirection)
+			: this(new BoardCoords(row, column), swapDirection) { }
+
+		public BoardGemSwap(BoardCoords coords, BoardGemSwapDirections swapDirection)
 		{
 			From = coords;
 			SwapDirection = swapDirection;
 			To = coords.Move(swapDirection);
 		}
 
-		protected override void ApplyActionToBoardState(BoardState boardState)
+		public void ApplySwap(BoardState boardState)
 		{
 			(boardState[From], boardState[To]) = (boardState[To], boardState[From]);
 		}
 
-		protected override string GetFriendlyActionDescription()
-		{
-			return $"{From}<-swap->{To}";
-		}
-
 		#region Common Overrides
 
-		public static bool operator ==(BoardGemSwapAction left, BoardGemSwapAction right)
+		public static bool operator ==(BoardGemSwap left, BoardGemSwap right)
 		{
 			return left.Equals(right);
 		}
 
-		public static bool operator !=(BoardGemSwapAction left, BoardGemSwapAction right)
+		public static bool operator !=(BoardGemSwap left, BoardGemSwap right)
 		{
 			return !left.Equals(right);
 		}
 
 		public override bool Equals(object? value)
 		{
-			if (value is not BoardGemSwapAction coords)
+			if (value is not BoardGemSwap other)
 			{
 				return false;
 			}
 
-			return Equals(coords);
+			return Equals(other);
 		}
 
-		public bool Equals(BoardGemSwapAction? other)
+		public bool Equals(BoardGemSwap other)
 		{
-			if (other is null)
-			{
-				return false;
-			}
-
 			if (GetHashCode() == other.GetHashCode())
 			{
 				return true;
@@ -85,6 +78,11 @@
 			};
 
 			return HashCode.Combine(fromCoordsNormalized.Row, fromCoordsNormalized.Column, directionNormalized);
+		}
+
+		public override string ToString()
+		{
+			return $"{From} <-> {To}";
 		}
 
 		#endregion Common Overrides

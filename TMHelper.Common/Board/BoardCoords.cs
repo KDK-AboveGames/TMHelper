@@ -41,12 +41,12 @@
 
 		public override bool Equals(object? value)
 		{
-			if (value is not BoardCoords coords)
+			if (value is not BoardCoords other)
 			{
 				return false;
 			}
 
-			return Equals(coords);
+			return Equals(other);
 		}
 
 		public bool Equals(BoardCoords other)

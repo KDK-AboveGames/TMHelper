@@ -1,11 +1,9 @@
-﻿using TMHelper.Common.Board.Actions;
-
-namespace TMHelper.Common.Board.BoxOfSages
+﻿namespace TMHelper.Common.Board.BoxOfSages
 {
 	public interface IBoxOfSagesBoardSolver
 	{
-		List<BoardGemSwapAction> GetAllPossibleSwaps(BoxOfSagesBoardState boardState);
+		List<BoardGemSwap> GetAllPossibleSwaps(BoxOfSagesBoardState boardState);
 
-		BoxOfSagesBoardActionResult ApplyActionAndSolve(BoxOfSagesBoardState boardState, BoardGemSwapAction action);
+		void Solve(BoxOfSagesBoardState boardStateToUpdate, out BoardCollapseResult gemLinesCollapsed);
 	}
 }

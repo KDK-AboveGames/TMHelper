@@ -1,4 +1,6 @@
-﻿namespace TMHelper.Common.Board
+﻿using System.Text;
+
+namespace TMHelper.Common.Board
 {
 	/// <summary>
 	/// Модель для хранения состояния доски match-3.
@@ -6,7 +8,7 @@
 	/// Координата левого верхнего угла доски равна 1:1.
 	/// Координаты только увеличиваются.
 	/// </summary>
-	public abstract class BoardState
+	public abstract class BoardState : ICloneable
 	{
 		public readonly int Rows;
 		public readonly int Columns;
@@ -69,11 +71,122 @@
 			}
 		}
 
+		public bool IsEmpty
+		{
+			get
+			{
+				for (int i = 0; i < Gems.Length; i++)
+				{
+					if (!Gems[i].IsSameTypeAs(BoardGems.Empty))
+					{
+						return false;
+					}
+				}
+
+				return true;
+			}
+		}
+
 		#region Utils
+
+		/// <summary>
+		/// Обновляет переданное состояние доски match-3,
+		/// сдвигая все камни по столбцам так, чтобы не оставалось пустых клеток
+		/// между камнями и нижней стенкой доски,
+		/// а так же между самими камнями в стобце.
+		/// </summary>
+		public void FallGemsOnBoard()
+		{
+			for (int column = Columns; column >= 1; column--)
+			{
+				int? rowCellEmpty = null;
+				for (int row = Rows; row >= 1; row--)
+				{
+					if (!this[row, column].IsSameTypeAs(BoardGems.Empty))
+					{
+						if (rowCellEmpty.HasValue)
+						{
+							this[rowCellEmpty.Value, column] = this[row, column];
+							rowCellEmpty = rowCellEmpty.Value - 1;
+						}
+					}
+					else if (!rowCellEmpty.HasValue)
+					{
+						rowCellEmpty = row;
+					}
+				}
+
+				if (rowCellEmpty.HasValue)
+				{
+					for (int rowToClear = rowCellEmpty.Value; rowToClear >= 1; rowToClear--)
+					{
+						this[rowToClear, column] = BoardGems.Empty;
+					}
+				}
+			}
+		}
+
+		/// <summary>
+		/// Обновляет переданное состояние доски match-3,
+		/// сдвигая все камни по строкам так, чтобы не оставалось пустых клеток
+		/// между камнями и правой стенкой доски,
+		/// а так же между самими камнями в строке.
+		/// </summary>
+		public void ShiftGems()
+		{
+			for (int row = Rows; row >= 1; row--)
+			{
+				int? columnCellEmpty = null;
+				for (int column = Columns; column >= 1; column--)
+				{
+					if (!this[row, column].IsSameTypeAs(BoardGems.Empty))
+					{
+						if (columnCellEmpty.HasValue)
+						{
+							this[row, columnCellEmpty.Value] = this[row, column];
+							columnCellEmpty = columnCellEmpty.Value - 1;
+						}
+					}
+					else if (!columnCellEmpty.HasValue)
+					{
+						columnCellEmpty = column;
+					}
+				}
+
+				if (columnCellEmpty.HasValue)
+				{
+					for (int columntToClear = columnCellEmpty.Value; columntToClear >= 1; columntToClear--)
+					{
+						this[row, columntToClear] = BoardGems.Empty;
+					}
+				}
+			}
+		}
+
+
+		public int GetGemsOnBoardTotalCount(BoardGems gemBaseType)
+		{
+			int totalCount = 0;
+
+			for (int row = 1; row <= Rows; row++)
+			{
+				for (int column = 1; column <= Columns; column++)
+				{
+					BoardGems gem = this[row, column];
+
+					if (gem.IsSameTypeAs(gemBaseType))
+					{
+						totalCount += gem.GetCountValue();
+					}
+				}
+			}
+
+			return totalCount;
+		}
 
 		public List<BoardCoords> GetCoordsAround(BoardCoords coords)
 		{
-			List<BoardCoords> coordsAround = new List<BoardCoords>();
+			List<BoardCoords> coordsAround = new();
 
 			int row;
 			int column;
@@ -119,6 +232,31 @@
 			{
 				throw new IndexOutOfRangeException(nameof(index));
 			}
+		}
+
+		public abstract object Clone();
+
+		public override string ToString()
+		{
+			StringBuilder sb = new();
+
+			for (int i = 0; i < Gems.Length; i++)
+			{
+				BoardGems gem = Gems[i];
+
+				sb.Append(gem.ToStringFriendly());
+
+				if ((i + 1) % Columns != 0) // если не последняя ячейка в строке
+				{
+					sb.Append(", ");
+				}
+				else if (i < Gems.Length - 1) // если не последняя ячейка во всей таблице
+				{
+					sb.AppendLine(",");
+				}
+			}
+
+			return sb.ToString();
 		}
 
 		#endregion Utils

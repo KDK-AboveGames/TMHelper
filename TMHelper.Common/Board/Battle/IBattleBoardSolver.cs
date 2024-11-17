@@ -1,11 +1,9 @@
-﻿using TMHelper.Common.Board.Actions;
-
-namespace TMHelper.Common.Board.Battle
+﻿namespace TMHelper.Common.Board.Battle
 {
 	public interface IBattleBoardSolver
 	{
-		List<BoardGemSwapAction> GetAllPossibleSwaps(BattleBoardState boardState);
+		List<BoardGemSwap> GetAllPossibleSwaps(BattleBoardState boardState);
 
-		BattleBoardActionResult ApplyActionAndSolve(BattleBoardState boardState, BoardAction action);
+		void Solve(BattleBoardState boardStateToUpdate, out BoardCollapseResult gemLinesCollapsed);
 	}
 }

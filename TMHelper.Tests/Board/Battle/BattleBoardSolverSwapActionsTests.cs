@@ -18,8 +18,8 @@ namespace TMHelper.Tests.Board.Battle
 				_, _, _, G, G, R);
 
 			AssertActionResultsEqual(
-				BoardSolver.ApplyActionAndSolve(state, CreateSwap(6, 6, Up)),
-				BoardSolver.ApplyActionAndSolve(state, CreateSwap(5, 6, Down)));
+				DoSwapAction(state, new BoardGemSwap(6, 6, Up)),
+				DoSwapAction(state, new BoardGemSwap(5, 6, Down)));
 		}
 
 		[Test]
@@ -34,8 +34,8 @@ namespace TMHelper.Tests.Board.Battle
 				_, _, _, _, G, R);
 
 			AssertActionResultsEqual(
-				BoardSolver.ApplyActionAndSolve(state, CreateSwap(6, 5, Right)),
-				BoardSolver.ApplyActionAndSolve(state, CreateSwap(6, 6, Left)));
+				DoSwapAction(state, new BoardGemSwap(6, 5, Right)),
+				DoSwapAction(state, new BoardGemSwap(6, 6, Left)));
 		}
 	}
 }
