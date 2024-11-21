@@ -99,29 +99,25 @@ namespace TMHelper.Common.Board
 		{
 			for (int column = Columns; column >= 1; column--)
 			{
-				int? rowCellEmpty = null;
-				for (int row = Rows; row >= 1; row--)
+				int rowSlowP = Rows;
+				int rowFastP = Rows;
+
+				while (rowFastP > 0)
 				{
-					if (!this[row, column].IsSameTypeAs(BoardGems.Empty))
+					if (!this[rowFastP, column].IsSameTypeAs(BoardGems.Empty))
 					{
-						if (rowCellEmpty.HasValue)
-						{
-							this[rowCellEmpty.Value, column] = this[row, column];
-							rowCellEmpty = rowCellEmpty.Value - 1;
-						}
+						this[rowSlowP, column] = this[rowFastP, column];
+
+						rowSlowP--;
 					}
-					else if (!rowCellEmpty.HasValue)
-					{
-						rowCellEmpty = row;
-					}
+
+					rowFastP--;
 				}
 
-				if (rowCellEmpty.HasValue)
+				while (rowSlowP > 0)
 				{
-					for (int rowToClear = rowCellEmpty.Value; rowToClear >= 1; rowToClear--)
-					{
-						this[rowToClear, column] = BoardGems.Empty;
-					}
+					this[rowSlowP, column] = BoardGems.Empty;
+					rowSlowP--;
 				}
 			}
 		}
@@ -136,29 +132,25 @@ namespace TMHelper.Common.Board
 		{
 			for (int row = Rows; row >= 1; row--)
 			{
-				int? columnCellEmpty = null;
-				for (int column = Columns; column >= 1; column--)
+				int columnSlowP = Columns;
+				int columnFastP = Columns;
+
+				while (columnFastP > 0)
 				{
-					if (!this[row, column].IsSameTypeAs(BoardGems.Empty))
+					if (!this[row, columnFastP].IsSameTypeAs(BoardGems.Empty))
 					{
-						if (columnCellEmpty.HasValue)
-						{
-							this[row, columnCellEmpty.Value] = this[row, column];
-							columnCellEmpty = columnCellEmpty.Value - 1;
-						}
+						this[row, columnSlowP] = this[row, columnFastP];
+
+						columnSlowP--;
 					}
-					else if (!columnCellEmpty.HasValue)
-					{
-						columnCellEmpty = column;
-					}
+
+					columnFastP--;
 				}
 
-				if (columnCellEmpty.HasValue)
+				while (columnSlowP > 0)
 				{
-					for (int columntToClear = columnCellEmpty.Value; columntToClear >= 1; columntToClear--)
-					{
-						this[row, columntToClear] = BoardGems.Empty;
-					}
+					this[row, columnSlowP] = BoardGems.Empty;
+					columnSlowP--;
 				}
 			}
 		}
