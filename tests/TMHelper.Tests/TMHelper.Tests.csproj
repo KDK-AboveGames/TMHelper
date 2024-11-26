@@ -18,8 +18,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\TMHelper.BoardSolving\TMHelper.BoardSolving.csproj" />
-    <ProjectReference Include="..\TMHelper.Common\TMHelper.Common.csproj" />
+    <ProjectReference Include="..\..\src\TMHelper.BoardSolving\TMHelper.BoardSolving.csproj" />
+    <ProjectReference Include="..\..\src\TMHelper.Common\TMHelper.Common.csproj" />
   </ItemGroup>
 
 </Project>

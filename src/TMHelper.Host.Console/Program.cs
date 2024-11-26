@@ -11,10 +11,6 @@ namespace TMHelper.Host.Console
 	{
 		private static int Main(string[] args)
 		{
-			System.Console.SetWindowSize(
-				Math.Max(System.Console.LargestWindowWidth - 30, System.Console.WindowWidth),
-				System.Console.WindowHeight);
-
 			return CommandLine.Parser.Default.ParseArguments<LaunchOptions>(args)
 				.MapResult(
 					(LaunchOptions options) =>
